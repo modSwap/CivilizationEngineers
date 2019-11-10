@@ -1,0 +1,72 @@
+Logistics involves the movement of goods between different points. 
+
+Trade involves the agreement of exchangethat logicstics must be used to fulfill. 
+
+Value is created when there is scarcity. 
+
+Prices of items are determined by their ore composition, and my be raised if there is high demand.
+
+An agent makes production decisions based on varying parameters - shipping and assembler fuel. 
+Passive shipping costs:
+- docking fee
+- taxes
+- fuel
+- temporary tarriffs
+
+
+
+	Points in the center of the entire area will see greater traffic and competition for factory contracts, because of shipping different ores relatively equal distances. It is more expensive to have production locations (requiring many diverse types of ore) at outer locations because of the fuel required to ship so many items longer distances.
+
+Trade orders can be made and must be fulfilled before a certain time before being void. Purchased goods are typically picked up by the buyer, but sellers can transport the wares and the price for the transaction can be altered. This is to create more competition between market players. 
+
+There is always some degree of shipping risk due to hostile activity. Risks can be countered by insurance, def
+
+
+
+The universal clock can be a system that reports the grid to a root grid that handles events within the server. When trajectory burn input is left to the user who has no way to predict sim speed drops, over/undershooting is the result. The correction attempts compound the problem, which is why speed is only limited to <200 m/s on most servers.
+
+Jump speed should not be instant, but rather the result of traveling at ~20/m/s/s acceleration and obtaining speeds of up to 4 km/s for longer hauls. The only way this could be possible is by reporting trajectories to the root grid. Interceptions can be attempted and coordinated in the server infrastructure where sim speed will not affect the workings. Slowdowns would occur while grids are not in the direct control of the player, but otherwise automated to achieve some quick goal like flying to an object or targeting a player.
+
+I have scripted a ship to attempt to travel a certain distance at maximum burn in both directions. In orientation it never strays, but the distance travelled oscillates and is not precise. If left to the in-game auto pilot, the engines are technically never used. This thrust function has to be implemented
+
+The communication format has to be standardized more to fit in all the root reporting data in order to keep the scripts policed. There should not be more than 2 self-loops by a script in order to verify communcations, otherwise script traffic can be coordinated and spread out relative to the precision of the timer amount. Still need to figure out how much CPU is used when dozens of timers are running for several seconds at a time.
+
+The thrust can only be handled in a percent 1-100.00
+The double value of that and the timer are the only precisions that can be tweaked to achieve a pinpoint delivery of a ship from fast speeds over long ranges. 
+
+I don't know if this will effect performance yet, but the source could be modded to accommodate the assumptions that grid will only travel when given some sort of traffic control. This could allow for auto-merging into faster/slower traffic 
+
+
+I'm working with random time values, when autopilot is on but engines are toggled off, remote control can orient to a location while the ship is floating in a direction. Vector thrust in 3 directions could send a craft to a precise location without relying on gyros to orient while burning.]
+
+a way to fix this would be to have timer set back AVG_AMOUNT to check disdtance again with more precision and then it can stop exactly where it needs to be, or close enough and we factor that in too
+
+A combination of autopilot orientation and vector thrust can enable smooth transitions, first angle of alignment to target point must be determined. Then take angle of 3 thruster facings and give them a force that can send them along a path at a fixed orientation, then turn off engines and allow autopilot to orient to the next projected location
+
+The problem with much of this is that there's not one answer for some things. For example the crane has 2 angles from which to use as the arms extension. This is to form an obtuse triangle with the angle of the arm to a point above the container. 
+
+Also the master clock should be on one PB that acts as the CPU of the server. It stores information about all grids on the server, as they must be required to be registered to be in play. From here, stats and encounters can be arranged as it enables override of all grid-wide functions. There may be a better way to do this with the source, but for now PB is all I know
+
+
+The root hub will always be addressed when inter grid calculations need to be made, the individual grids only have code to handle orders. 
+
+This is the only way that spectacular events can be processed without sim speed drop. The requirement is that before large events involving the collision of 2k+ blocks, a time must elapse before the event. The crash can be pre rendered during this time and pre load for impending witnesses to the scene. This event involves blocks that cannot be altered - it is more of a display than a simulation at this point. If pre rendered explosion/collisions were able to be interferred with, it would defeat the purpose, because large amount of debris colliding with players moving constantly with W,A,S,D would throw the simulation into the calculation of many new trajectories. So a large explosion is kept as a pre-render, projector like display ( only it doesn't look holographic). 
+
+
+_________________________________________________////
+
+
+
+Just floated around the server a bit, tried out vector thrust things, need to start building into the ship template. The primary thing to flesh out is the precision of the values assigned to thruster values. A way to counter this is to require more thrusters per side, each of which having a percentage precision of .01%. When attempting to traverse longer distances with only 0.01% resolution on a 40MN thruster, values can vary when used with the timer that has a resolution of  50ms. So two thrusters of similar max thrust can each and maybe another 2 of half that capacity can combine in such a way as to deliver a very precise Newton in that direction. For example, 50% of 40MN + 20% of 40MN + 10% of 1MN + etc
+
+the more thrusters there are the more complex the script will be, so this number should be kept to minimum. The thrust ratios could be determined by tenths place? That is, 10% of a 100MN thruster is 10MN of a required thrust, then add more precise thruster percentages, say 50% of a 10MN, and 25.12% of a 1MN for the remainder
+
+
+Competitive Dynamics and game mechanics:
+The strategy in SE is to manage time, distance, and inventory. Physical limitations of the human body will be put in place and players will have to respect this. 
+
+The body will only be able to withstand a certain number of G's for a certain period of time before the player will die, and there is a certain amount of recovery time before high G rates can be sustained again. This is a realistic constraint, but also provides an opportunity to tweak core engine elements:
+
+A ship will have two modes - local thrust and distance thrust. Local is for moving around a smaller area, and there may be a speed cap in order to isolate certain players from the rest of the server. When long-range distance is desired, the player must initiate a "jump" mode. This removes the speed cap, but the ship orientation is locked in. At this point, the acceleration and subsequent deceleration may begin. Pre-rendering can occur at this point since player trajectory has been set, although the player can choose to stop at anytime, but only in low populated areas because "jump requests" will coordinate with other moving bodies in order to avoid collision.
+
+Unmanned vehicles will only be limited by the output of a power source. "Leveling up" may come in the form of higher G tolerance, thus rewarding the player with shorter travel times. This is how it could feel like a MoBA, or predictable PVE - fight when you want, farm when you don't want the risk. Predictable ships will arrive in certain areas and grid disable means players can "collect" a special drop as a farm for a certain reward for PvP. 200 m/s will be the limit for PvP but minion flows will change agro according to PVP damage taken. Or Players can control minion wave targetting direction which adds to the hotkey selection bar options, pre programmed into player control grids that gives out short distance signals to friendly craft in up to 50k radius 

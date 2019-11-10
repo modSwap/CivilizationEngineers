@@ -1,0 +1,157 @@
+string SHIP_NAME = "Jump_test" ;         
+List <Vector3D> path = new List <Vector3D> ();              
+List <string> pathInfo = new List <string> ();             
+Vector3D v,s;   
+string[] waypoints;                         
+float m, max_A, max_F, time, dist;   
+bool aligning, moving, traveling = false;             
+bool start, accel1, decel1, accel2, decel2= false;        
+  
+string[] arg;      
+string debug = "";   
+int index = 0;       
+   
+   
+public void Main(string argument) 
+{             
+   
+   
+	var gts = GridTerminalSystem;             
+	IMyTerminalBlock remote = gts.GetBlockWithName("remote") as IMyTerminalBlock;       
+	IMyRadioAntenna ant = gts.GetBlockWithName("Jump_test") as IMyRadioAntenna;        
+	IMyTimerBlock timer = gts.GetBlockWithName("timer") as IMyTimerBlock;               
+	IMyShipController rc = (IMyShipController)remote;                   
+	IMyThrust forwardL = gts.GetBlockWithName("jmp-L-forward") as IMyThrust;         
+	IMyThrust forwardM = gts.GetBlockWithName("jmp-M-forward") as IMyThrust;         
+	IMyThrust forwardS = gts.GetBlockWithName("jmp-S-forward") as IMyThrust;         
+	IMyThrust backwardL = gts.GetBlockWithName("jmp-L-backward") as IMyThrust;         
+	IMyThrust backwardM = gts.GetBlockWithName("jmp-M-backward") as IMyThrust;         
+	IMyThrust backwardS = gts.GetBlockWithName("jmp-S-backward") as IMyThrust;         
+	IMyRemoteControl rem = ( IMyRemoteControl )rc;         
+	var r_m =  remote.WorldMatrix;   
+	v =  r_m.Translation + r_m.Forward * ( 3000 );   
+	remote.CubeGrid.CustomName = SHIP_NAME;     
+  
+ 
+	if(argument=="check") { 
+		log(Convert.ToString(forwardS.GetValueFloat("Override")));
+	}
+
+	if(argument == "reset"){
+		timer.ApplyAction("Stop");
+		setThrust(0, "forward");
+		setThrust(0, "backward");
+		return;
+	}
+
+	if( argument == "start" ) {   
+		accel1 = true;   
+		Vector3D current = remote.GetPosition();   
+		IMyCubeGrid grid = remote.CubeGrid;    
+		MyShipMass mass = rc.CalculateShipMass();   
+		s = v;   
+		dist = (float)(current - s).Length();   
+		m = (float)mass.TotalMass;   
+		max_F =  forwardL.MaxEffectiveThrust 
+			+  forwardM.MaxEffectiveThrust 
+			 + forwardS.MaxEffectiveThrust;
+		max_A = max_F / m;   
+		time = (float)Math.Ceiling(Math.Sqrt(  (2*(dist)/2) / max_A ));   
+		max_A = (float)(dist / Math.Pow(time, 2));
+		max_F= (float)max_A*m;
+		timer.ApplyAction("TriggerNow");   
+		return;   
+	}   
+	
+	if( accel1 == true ) {    
+		log("mass = " + Convert.ToString(m) );
+		log("maxF = " + Convert.ToString(max_F) );
+		log("maxA = " + Convert.ToString(max_A) );
+		
+		accel1 = false;    
+		decel1 = true;    
+		timer.SetValueFloat("TriggerDelay", (float) (time) );        
+		setThrust(max_F, "forward");
+		log("jump-100M =" + Convert.ToString(forwardL.GetValueFloat("Override")));
+		log("jump-10M =" + Convert.ToString(forwardM.GetValueFloat("Override")));
+		log("jump-1k =" + Convert.ToString(forwardS.GetValueFloat("Override")));
+		ant.TransmitMessage( "log," + SHIP_NAME + "," + debug , MyTransmitTarget.Everyone );
+		timer.ApplyAction("Start");   
+		return;   
+	}   
+   
+	if( decel1 == true ) {    
+		setThrust(0, "forward");
+		setThrust(max_F, "backward");
+		accel2 = true;    
+		decel1 = false;        
+		return;      
+	}   
+		   
+	if( accel2 == true ) {   
+		accel2 = false;    
+		decel2 = true;    
+		timer.SetValueFloat("TriggerDelay", (float) (time) );        
+		setThrust(max_F, "backward");
+		timer.ApplyAction("Start");   
+		return;   
+	}   
+   
+	if( decel2 == true ) {    
+		setThrust(0, "backward");
+		setThrust(max_F, "forward");
+		decel2 = false;        
+		accel1 = true;   
+		return;      
+	}   
+   
+	ant.TransmitMessage( "log," + SHIP_NAME + "," + debug , MyTransmitTarget.Everyone );        
+	debug = "";       
+	 
+} //end main             
+			 
+void setThrust(double F, string direction)
+{
+	var gts = GridTerminalSystem;             
+	IMyThrust forwardL = gts.GetBlockWithName("jmp-L-forward") as IMyThrust;         
+	IMyThrust forwardM = gts.GetBlockWithName("jmp-M-forward") as IMyThrust;         
+	IMyThrust forwardS = gts.GetBlockWithName("jmp-S-forward") as IMyThrust;         
+	IMyThrust backwardL = gts.GetBlockWithName("jmp-L-backward") as IMyThrust;         
+	IMyThrust backwardM = gts.GetBlockWithName("jmp-M-backward") as IMyThrust;         
+	IMyThrust backwardS = gts.GetBlockWithName("jmp-S-backward") as IMyThrust;         
+
+	if( direction == "forward"){
+		forwardL.SetValueFloat("Override", (float)Math.Floor(F/1000000));
+		forwardM.SetValueFloat("Override", (float)Math.Round((F%1000000)/10000, 1));
+		forwardS.SetValueFloat("Override", (float)+(F%1000)/10);
+	}
+	if( direction == "backward"){
+		backwardL.SetValueFloat("Override", (float)Math.Floor(F/1000000));
+		backwardM.SetValueFloat("Override", (float)Math.Round((F%1000000)/10000, 1));
+		backwardS.SetValueFloat("Override", (float)(F%1000)/10);
+	}
+
+}
+			 
+//~~~begin.universal.functions   
+   
+void send( string grid, string type, string target )     
+{     
+	IMyRadioAntenna anten = GridTerminalSystem.GetBlockWithName(SHIP_NAME) as IMyRadioAntenna; 
+	anten.TransmitMessage( grid + "|" + type + "?" + target, MyTransmitTarget.Everyone );     
+}     
+	 
+void log ( string s )       
+{       
+	debug += s + ",";       
+}       
+		   
+void print( int n, string s)
+{
+	IMyTextPanel lcd = GridTerminalSystem.GetBlockWithName("lcd" + n) as IMyTextPanel;
+
+}
+   
+   
+
+ 

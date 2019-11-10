@@ -1,0 +1,138 @@
+    public Program() { }     
+public void Save() { }     
+     
+double m, max_A, max_F, time, dist;
+string SHIP_NAME = "TestShip:3" ; 
+bool start, accel, decel, aligning = false;     
+IList <Vector3D> path = new List <Vector3D> ();      
+IList <string> pathInfo = new List <string> ();     
+Vector3D v,s;
+string[] arg;   
+string debug = "";
+
+
+     
+public void Main(string argument) {     
+        
+var gts = GridTerminalSystem;     
+
+
+IMyTerminalBlock remote=gts.GetBlockWithName("remote") as IMyTerminalBlock;      
+IMyTimerBlock timer = gts.GetBlockWithName("timer") as IMyTimerBlock;      
+IMyShipController rc = (IMyShipController)remote;          
+IMyThrust forward = gts.GetBlockWithName("Forward") as IMyThrust;      
+IMyThrust backward = gts.GetBlockWithName("Backward") as IMyThrust;      
+IMyRemoteControl rem = ( IMyRemoteControl )rc;      
+var ant =  gts.GetBlockWithName( SHIP_NAME ) as IMyRadioAntenna; 
+var r_m =  remote.WorldMatrix;
+v =  r_m.Translation + r_m.Forward * ( 200 );
+
+
+if( argument == "start" ) 
+{
+accel = true;
+Vector3D current = remote.GetPosition();
+IMyCubeGrid grid = remote.CubeGrid; 
+MyShipMass mass = rc.CalculateShipMass();
+s = v;
+dist = (current - s).Length();
+m = mass.TotalMass;
+max_F =  forward.MaxEffectiveThrust;
+max_A = max_F / m;
+time = Math.Sqrt(  (2*(dist)/2) / max_A );
+timer.ApplyAction("TriggerNow");
+return;
+}
+
+
+if( accel == true ) 
+{ 
+forward.SetValueFloat("Override", (float) (.00833*max_F) );  
+timer.SetValueFloat("TriggerDelay", (float) (time) );     
+log( "dist = " + dist ); 
+log( "total mass = " + m ); 
+log( "max force = " + max_F ); 
+log( "max acc = " + max_A ); 
+log( "time = " + time ); 
+accel = false; 
+decel = true; 
+timer.ApplyAction("Start");
+return;
+}
+
+
+if( decel == true ) 
+{ 
+forward.SetValueFloat("Override", 0f); 
+backward.SetValueFloat("Override", (float) (.00833*max_F) );  
+log( "dist = " + dist );  
+log( "total mass = " + m );  
+log( "max force = " + max_F );  
+log( "max acc = " + max_A );  
+log( "time = " + time );  
+decel = false;      
+return;   
+}
+
+
+if( decel == false )
+{
+backward.SetValueFloat("Override", 0f ); 
+//remote.ApplyAction("InertiaDampeners");
+timer.ApplyAction("Stop");
+}
+
+
+ant.TransmitMessage( "log," + SHIP_NAME + "," + debug, MyTransmitTarget.Everyone );
+debug = "";
+
+
+} //end main
+
+
+bool Align( string face, Vector3D coord )          
+{         
+var gts = GridTerminalSystem;         
+var thrusters = new List<IMyThrust>( );         
+IMyTerminalBlock remote = gts.GetBlockWithName("remote") as IMyTerminalBlock;          
+IMyRemoteControl rem = (IMyRemoteControl)remote;          
+gts.GetBlocksOfType<IMyThrust>( thrusters );         
+         
+if (aligning == false )         
+{         
+        
+foreach( IMyThrust th in thrusters )         
+    th.ApplyAction("OnOff_Off");         
+                        
+rem.ClearWaypoints();            
+rem.AddWaypoint( coord, "alignTo1" );            
+rem.AddWaypoint( coord, "alignTo2" );            
+rem.AddWaypoint( coord, "alignTo3" );            
+rem.ApplyAction( face );            
+rem.SetAutoPilotEnabled( true );           
+}         
+         
+if ( aligning == true && rem.IsAutoPilotEnabled == false )         
+{         
+//rem.ApplyAction("ControlThrusters" );         
+         
+foreach( IMyThrust th in thrusters )          
+    th.ApplyAction("OnOff_On");          
+                        
+return false;         
+}         
+         
+return true;         
+}
+
+
+void Move( Vector3D target, int time, string direction ) {}
+
+
+void log ( string s )   
+{   
+ debug += s + ",";   
+}  
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTE5NjgyNTU5MDZdfQ==
+-->

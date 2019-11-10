@@ -1,0 +1,327 @@
+public Program() {}   
+public void Save() {}          
+          
+string SHIP_NAME = "TestShip:1" ;      
+  
+List <Vector3D> path = new List <Vector3D> ();           
+List <string> pathInfo = new List <string> ();          
+bool aligning, moving, traveling = false;          
+string[] waypoints;                      
+int index = 0;   
+Vector3D v;        
+string debug = "";    
+    
+public void Main(string argument) {          
+             
+var gts = GridTerminalSystem;          
+IMyTerminalBlock remote=gts.GetBlockWithName("remote") as IMyTerminalBlock;            
+IMyTimerBlock timer = gts.GetBlockWithName("timer") as IMyTimerBlock;            
+IMyShipController rc = (IMyShipController)remote;                
+IMyRemoteControl rem = (IMyRemoteControl)rc;        
+  
+  
+string[] arg = argument.Split( '|' );  
+if( arg.Length > 1 )  
+{  
+  
+    if( arg[0] == "all" && arg[1] == "reset" )         
+{         
+	timer.ApplyAction("Stop");             
+rem.SetAutoPilotEnabled( false );             
+return;  
+	}        
+	
+  
+  
+if ( arg[0] == SHIP_NAME )  
+{        
+List<IMyTerminalBlock> gyros = new List<IMyTerminalBlock>();           
+gts.GetBlocksOfType<IMyGyro>( gyros );           
+List<IMyRadioAntenna> an = new List<IMyRadioAntenna>();              
+gts.GetBlocksOfType<IMyRadioAntenna>( an );             
+IMyRadioAntenna ant = an[0];      
+an[0].SetCustomName( SHIP_NAME );      
+//IMyCubeGrid grid = remote.CubeGrid;      
+remote.CubeGrid.CustomName = SHIP_NAME;      
+IMyProgrammableBlock pb = gts.GetBlockWithName("PB") as IMyProgrammableBlock;    
+  
+      
+/*  
+string target =  arg[ 1 ].Split('?')[ 1 ];  
+string[] intent = arg[ 1 ].Split('?')[ 0 ].Split('.');  
+  
+  
+//send( this_grid, type, target );  
+switch( intent[0] )  
+{  
+ case "action":  
+  switch ( intent[1] )  
+  {  
+  case "dock":  
+   send(   
+  case "trade":  
+  case "mine":  
+  case "salvage":  
+  case "patrol":  
+  }  
+ case "behavior":  
+  switch ( intent[1] )  
+  {  
+  case "safe":  
+  case "aggressive":  
+  }  
+ case "permission":  
+  switch ( intent[1] )    
+  {  
+   case "granted":  
+   case "denied":  
+  }  
+   
+}  
+*/  
+  
+if( arg[2] == "dock" )            
+{           
+timer.ApplyAction("Stop");           
+ant.TransmitMessage( ant.CustomName + " requesting dock", MyTransmitTarget.Everyone);            
+}       
+  
+arg = argument.Split( ':' );         
+if( arg.Length > 1)         
+{        
+if( arg[0] == "dock" && arg[1]  == "f" && arg[2]  == ant.CustomName.Split( ':')[1])        
+ {        
+ Echo( "dock" );    
+ timer.ApplyAction("Stop");           
+ ant.TransmitMessage( ant.CustomName + " requesting dock", MyTransmitTarget.Everyone );           
+ }        
+}        
+        
+        
+if( argument == "Accepted " + ant.CustomName )           
+ant.TransmitMessage( "Ready", MyTransmitTarget.Everyone );           
+                 
+if( argument == "Hangar at capacity" )          
+log( "Docking request denied - hangar full");        
+        
+          
+if( traveling == true )  {          
+ traveling = Travel( waypoints );            
+foreach( string i in waypoints )              
+ Echo( i );          
+}           
+else            
+{         
+ log(  "Destination reached" );           
+ timer.ApplyAction( "Stop" );      
+ timer.SetValue( "TriggerDelay", (Single) 5 );          
+}        
+     
+if ( argument == "undock" )         
+{      
+if( pathInfo[ 3 ].Split( ':' )[ 1 ] == "Left" )      
+ pathInfo[ 2 ] =  "Move:Right";      
+else      
+ pathInfo[ 2 ] =  "Move:Left";        
+      
+pathInfo[ 3 ] =  "Move:Backward" ;      
+path.RemoveAt( 4 );     
+path.RemoveAt( 1 );      
+pathInfo.RemoveAt( 4 ) ;      
+pathInfo.RemoveAt( 1 );      
+path.Reverse();      
+pathInfo.Reverse();      
+     
+log( path.Count.ToString() );     
+string w = "Waypoints,";      
+for( int i = 0 ; i < pathInfo.Count; i++)      
+w += pathInfo[ i ] + "," + path[i].GetDim(0) + "," + path[i].GetDim(1) + "," + path[i].GetDim(2) + ",";      
+      
+waypoints = w.Split(',');      
+index = 0;      
+// traveling = true;     
+traveling = Travel( waypoints );            
+timer.ApplyAction("Start");      
+}     
+     
+if ( argument.Split( ',' )[0].Split( '/')[0] == "Waypoints" && argument.Split( ',' )[0].Split( '/')[1] == ant.CustomName )           
+{           
+waypoints = argument.Split( ',');           
+foreach( string i in waypoints )           
+ log(  i );          
+log(  waypoints.Length.ToString() );           
+traveling = Travel( waypoints );          
+timer.ApplyAction("Start");          
+}           
+ ant.TransmitMessage( "log," + SHIP_NAME + "," + debug , MyTransmitTarget.Everyone );     
+ debug = "";    
+  
+/*  
+ if( arg[0] == SHIP_NAME )    
+ {    
+ ant.TransmitMessage( "log," + SHIP_NAME + "," + debug , MyTransmitTarget.Everyone );    
+ debug = "";    
+ }    
+*/  
+  
+}  
+  
+} // end communcation if  
+  
+} //end main          
+          
+          
+bool Align( string face, Vector3D coord )           
+{          
+var gts = GridTerminalSystem;          
+var thrusters = new List<IMyThrust>( );          
+IMyTerminalBlock remote = gts.GetBlockWithName("remote") as IMyTerminalBlock;           
+IMyRemoteControl rem = (IMyRemoteControl)remote;           
+gts.GetBlocksOfType<IMyThrust>( thrusters );          
+          
+if (aligning == false )          
+{          
+         
+foreach( IMyThrust th in thrusters )          
+    th.ApplyAction("OnOff_Off");          
+                         
+rem.ClearWaypoints();             
+rem.AddWaypoint( coord, "alignTo1" );             
+rem.AddWaypoint( coord, "alignTo2" );             
+rem.AddWaypoint( coord, "alignTo3" );             
+rem.ApplyAction( face );             
+rem.SetAutoPilotEnabled( true );            
+}          
+          
+if ( aligning == true && rem.IsAutoPilotEnabled == false )          
+{          
+//rem.ApplyAction("ControlThrusters" );          
+          
+foreach( IMyThrust th in thrusters )           
+    th.ApplyAction("OnOff_On");           
+                         
+return false;          
+}          
+          
+return true;          
+}          
+          
+bool Move( string face, Vector3D coord  )          
+{           
+IMyTerminalBlock remote = GridTerminalSystem.GetBlockWithName( "remote" ) as IMyTerminalBlock;            
+IMyRemoteControl rem = (IMyRemoteControl)remote;            
+           
+if( moving == false )          
+{          
+rem.ClearWaypoints();              
+rem.AddWaypoint( coord, "moveTo1" );            
+rem.AddWaypoint( coord, "moveTo2" );              
+rem.AddWaypoint( coord, "moveTo3" );         
+rem.ApplyAction( face );              
+rem.SetAutoPilotEnabled( true );             
+}          
+if( moving == true && rem.IsAutoPilotEnabled == false )           
+ return false;          
+          
+return true;          
+}          
+          
+/*   */          
+bool Travel( string[] waypointsList )          
+{          
+ var gts = GridTerminalSystem;          
+IMyTerminalBlock remote = gts.GetBlockWithName( "remote" ) as IMyTerminalBlock;            
+ IMyTimerBlock timer = gts.GetBlockWithName("timer") as IMyTimerBlock;           
+ if( traveling == false )          
+ {          
+  timer.SetValue( "TriggerDelay", (Single) 1 );         
+  int k = -1 ;          
+  int r = 0;          
+  double dim;          
+            
+    
+  for( int i = 0; i < ( waypointsList.Length )-2; i++ )          
+  {           
+   if ( i%4 == 0 )          
+   {          
+    pathInfo.Add( waypointsList[ i+1 ] );          
+    k++;          
+    r = 0;          
+   }          
+   else          
+   {           
+    dim = Convert.ToDouble( waypointsList[ i+1 ] );           
+    v.SetDim( r, dim );          
+    r++;          
+    if ( r == 3)          
+     path.Add( v );          
+   }          
+           
+  } // for          
+ } // if          
+          
+          
+          
+ if( index < pathInfo.Count )          
+ {          
+  timer.ApplyAction("Stop");         
+  if( pathInfo[ index ].Split( ':' ) [0] == "Move" )          
+  {          
+   log( "moving " + index.ToString() );          
+   moving = Move( pathInfo[ index ].Split( ':' ) [1], path[ index ] );          
+  }          
+  if( pathInfo[ index ].Split( ':' ) [0] == "Align" )          
+  {          
+    log( "aligning " + index.ToString() );          
+   aligning = Align( pathInfo[ index ].Split( ':' ) [1], path[ index ] );          
+  }          
+  if( moving == false && aligning == false)          
+   index++;          
+ }           
+          
+ else          
+ {          
+  index = 0;          
+  return false;          
+ }          
+ timer.ApplyAction("Start");         
+          
+ return true;          
+}          
+          
+void send( string grid, string type, string target )  
+{  
+List<IMyRadioAntenna> an = new List<IMyRadioAntenna>();             
+GridTerminalSystem.GetBlocksOfType<IMyRadioAntenna>( an );            
+IMyRadioAntenna ant = an[0];      
+ant.TransmitMessage( grid + "|" + type + "?" + target, MyTransmitTarget.Everyone );  
+}  
+  
+void log ( string s )    
+{    
+ debug += s + ",";    
+}    
+        
+
+
+
+enna>();             
+GridTerminalSystem.GetBlocksOfType<IMyRadioAntenna>( an );            
+IMyRadioAntenna ant = an[0];      
+ant.TransmitMessage( grid + "|" + type + "?" + target, MyTransmitTarget.Everyone );  
+}  
+  
+void log ( string s )    
+{    
+ debug += s + ",";    
+}    
+        
+
+
+
+
+
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTE0MTkzODExODJdfQ==
+-->

@@ -1,0 +1,393 @@
+          /*
+Its for an automated station docking script. The hangar is separated into slots according to a specified maximum L, W, H of a ship, which the station's volume is divided by in order to generate available slot vectors.  
+ 
+A ship can broadcast "Request dock", and the station will parse its available hangar bays and if there's a bay available it will concatenate 5 vectors that's relative to one centered reference block on the station onto a string template to broadcast to the approaching ship: 
+ 
+(Move:Forward will tell autopilot to set forward as the facing direction, and activate autopilot to go straight to it. Align will turn off engines and have autopilot orient to a point without traveling to it) 
+Vector 1: "Approach", Move:Forward a point that's centered 2 ship lengths in front of the main hangar entrance 
+Vector 2: "AlignHangar", Align:Right to a point thats at the same elevation as the first vector, but to the left, in order to be parallel to the floor 
+Vector 3: "Entry", Move:Forward into the hangar to stage for parking 
+Vector 4: "bayAlign", Move:Left/Right depending on where the intended bay from the centered reference block 
+Vector 5: "bayEntry", Move:Forward into bay 
+ 
+From there the ship can broadcast "Docked". If there is a standardized location for the connector, a piston/connector can extend from a location in the bay area and connect the ship to the station, allowing automated trade orders to be fulfilled.
+*/
+
+
+public Program() {}
+public void Save() {}
+
+
+string GRID_NAME = "station";
+int MAX_QUEUE = 10;
+double blockDim = 2.5;
+bool dockInit = false;
+int b;
+int ship_L = 26;
+int ship_W = 9;
+int station_L = 71; 
+int station_W = 99;
+//int station_H = 29;
+int slot_buffer = 2;
+IList<string> dockBays = new List<string>( );
+IList<int> vacantBays = new List<int>( );
+IList<string> dockQueue = new List<string>( ); 
+IList<int> vacantQueue = new List<int>( ); 
+string[] arg;
+string debug = "";
+
+
+string dockingPath ="";
+
+
+public void Main( string argument ) {
+
+
+var gts = GridTerminalSystem;
+int station_max_storage = station_W - 2; 
+int station_hangar_slots = station_max_storage / ( ship_W + 2 ); 
+Vector3D[] bayVectors = new Vector3D[  station_hangar_slots ];
+Vector3D[] bayEntryVectors = new Vector3D[  station_hangar_slots ];
+
+
+
+
+IMyTerminalBlock remote = gts.GetBlockWithName( "remote" ) as IMyTerminalBlock; 
+IMyProgrammableBlock pb = gts.GetBlockWithName( "PB" ) as IMyProgrammableBlock; 
+var ant =  gts.GetBlockWithName( GRID_NAME ) as IMyRadioAntenna;
+var r_m =  remote.WorldMatrix;
+
+
+
+
+arg = argument.Split( ',' );
+string[] setting = argument.Split( '=' );  
+
+
+if ( setting.Length > 1 && setting[0] == "font")         
+ print ( Convert.ToDouble( setting[1] ) );
+
+
+if( arg.Length > 1 )
+{
+if( arg[0] + arg[1] == "masterreset" )
+{ 
+dockInit = false;
+log ( GRID_NAME + " reset" );
+}
+
+
+Vector3D approach =  r_m.Translation +
+ ( r_m.Forward * ( blockDim * 15) ) +
+ ( r_m.Up * blockDim * ((ship_L*2) + 31) );
+
+
+Vector3D stationAlign =  r_m.Translation + 
+ ( r_m.Forward * ( blockDim * 15) ) + 
+ ( r_m.Up * (blockDim * ((ship_L*2) + 31)) ) +
+ ( r_m.Left * ( blockDim * 50) ) ;
+
+
+Vector3D enter =  r_m.Translation + 
+ ( r_m.Forward * ( blockDim * 15) ) +
+ ( r_m.Up * 
+ (blockDim * (( 2 + ship_L + 5 + (ship_L/2)   ) -  ( station_L/2 )) ) 
+ 
+Vector3D[] queueCoords = DockingQueueVectors( 200, 200, approach );
+);
+
+
+// determine hangar spaces as evenly spaced vectors, with seperation buffer between slots
+// put into array, the length of which is total docking bays
+ 
+
+
+for ( int i = 0; i < station_hangar_slots ; i++ )
+{
+
+
+ bayVectors[i] =  r_m.Translation + 
+ ( r_m.Forward * ( blockDim * 14) ) + 
+ ( r_m.Down * ( blockDim * (  ((station_L / 2) + 1 )   -   (ship_L/2 + slot_buffer))  )    );
+
+
+ bayEntryVectors[i] =  enter;
+
+
+ // first slot is unique because it must have a slot_buffer from the wall
+ if ( i == 0 ) 
+ {
+  
+  bayVectors[i] += 
+  ( r_m.Left * ( blockDim * (  ((station_W /2) + 1 )  - (((ship_W/2) + slot_buffer ) + 1 ))   ));
+  bayEntryVectors[i] +=  
+  ( r_m.Left * ( blockDim * (  ((station_W /2) + 1 )  - (((ship_W/2) + slot_buffer ) + 1 ))   ));
+ } 
+ else if (  i * (ship_W + slot_buffer) +  (((ship_W/2)+1) + slot_buffer)  > (station_W/2)+1  ) 
+ { 
+   
+  bayVectors[i] +=  
+  ( r_m.Right * ( blockDim * ( 
+   ( ((ship_W + slot_buffer) * i ) + (((ship_W/2) + 1 ) + slot_buffer ) ) - ((station_W /2) + 1 )   )    ));
+
+
+  bayEntryVectors[i] +=
+  ( r_m.Right * ( blockDim * (
+  ( ((ship_W + slot_buffer) * i ) + (((ship_W/2) + 1 ) + slot_buffer ) ) - ((station_W /2) + 1 )   )    ));
+  }
+ else if (  i * (ship_W + slot_buffer) +  (((ship_W/2)+1) + slot_buffer)  < (station_W/2)+1  )
+ {
+  bayVectors[i] += 
+  ( r_m.Left * ( blockDim * 
+  ( (station_W /2 + 1) -  ( ((ship_W/2) +1) + slot_buffer + ( i * (ship_W + slot_buffer))) ) ) );
+
+
+  
+  bayEntryVectors[i] +=
+  ( r_m.Left * ( blockDim * 
+  ( (station_W /2 + 1) -  ( ((ship_W/2) +1) + slot_buffer + ( i * (ship_W + slot_buffer))) ) ) );
+ }
+ 
+} //end for
+
+
+
+
+for (int i = 0; i < arg.Length; i++)
+ log( arg[i] );
+
+
+if( arg.Length >= 3 )
+{
+if ( arg[1]+arg[2] == "requestingdock")
+{
+ log( "docking");
+ if( dockInit == false )
+ {
+   dockBays.Clear();
+   dockQueue.Clear();
+   vacantBays.Clear();
+   vacantQueue.Clear();
+ for ( int i = 0; i < station_hangar_slots; i++ )
+ {
+    dockBays.Add( "0" );
+	dockQueue.Add( "0" );
+ }
+  
+ log( "Hangar initialized" );
+ log( dockBays.Count.ToString() + " slots" );
+ dockInit  = true;
+  }
+
+
+log( "Dock permission requested");
+
+
+ //dockBays is a list of strings: 0 means vacant, a name is the ship occupying 
+ for( int i = 0; i < dockBays.Count; i++ ) 
+ { 
+  if( dockBays[i] == "0" )
+   vacantBays.Add( i );
+ } 
+
+
+log( "vacant count" + vacantBays.Count.ToString() );
+dockingPath = "";
+ if( vacantBays.Count  > 0 ) 
+ { 
+  b = vacantBays[ vacantBays.Count - 1 ];
+  dockingPath += "Waypoints/" + arg[0] + ",";
+
+
+  
+  //Move:Forward approach
+  dockingPath += "Move:Forward,";
+  for ( int i=0; i < 3; i++) 
+    dockingPath += approach.GetDim(i).ToString() + ",";
+
+
+
+
+    //Align:Right prepare entry
+  dockingPath += "Align:Right,";
+  for ( int i=0; i < 3; i++) 
+    dockingPath += stationAlign.GetDim(i).ToString() + ",";
+ 
+
+
+  //Move:Forward enter hangar
+  dockingPath += "Move:Forward,";
+  for ( int i=0; i < 3; i++)  
+    dockingPath += enter.GetDim(i).ToString() + ",";
+
+
+  //find available bay
+  //Move:Left/Right bayEntryVectors[]
+ dockingPath += "Move:";
+ if( b * (ship_W+2) > (station_W/2)+1  )   
+  dockingPath += "Left,";
+ else
+  dockingPath += "Right,";
+  
+  for ( int i=0; i < 3; i++)   
+   dockingPath += bayEntryVectors[b].GetDim(i).ToString() + ",";
+
+
+  //Move:Forward into slot
+  dockingPath += "Move:Forward,";
+  for ( int i=0; i < 3; i++)    
+   dockingPath += bayVectors[b].GetDim(i).ToString() + ",";
+
+
+
+
+string[] waypoints = dockingPath.Split( ',');  
+
+
+
+
+ for( int i=0; i < waypoints.Length; i++)  
+   log( waypoints[i].ToString() );
+
+
+
+
+ dockBays[ b ] = argument.Split( ' ' )[0]; 
+ log( dockBays[ b ] );
+ vacantBays.RemoveAt( vacantBays.Count - 1 );
+ ant.TransmitMessage ( "Accepted " + dockBays[ b ] , MyTransmitTarget.Everyone );
+ }
+ else if ( vacantQueue.Count > 0 )
+ {
+  q = vacantQueue[ vacantQueue.Count - 1 ];
+  dockingPath += "Waypoints/" + arg[0] + ",";
+  
+  dockingPath += "Move:Forward,";
+  for ( int i=0; i < 3; i++)   
+   dockingPath += dockQueue[q].GetDim(i).ToString() + ",";
+   
+  dockingPath += "Align:Forward,";
+  for ( int i=0; i < 3; i++)   
+   dockingPath += approach.GetDim(i).ToString() + ",";
+   
+   
+   
+  ant.TransmitMessage ( "Hangar at capacity, entering queue", MyTransmitTarget.Everyone );
+ }
+}
+}
+
+
+if ( argument == "Ready" )   
+{
+ ant.TransmitMessage ( dockingPath , MyTransmitTarget.Everyone );
+ for ( int i = 0; i < dockingPath.Split( ',').Length; i++ )
+  log( dockingPath.Split( ',' )[ i ] );
+}
+
+
+ if( arg[1] == GRID_NAME )   
+ {   
+ ant.TransmitMessage( "log," + GRID_NAME + "," + debug , MyTransmitTarget.Everyone );   
+ debug = "";   
+ }  
+}
+
+
+} //end main
+
+
+void print( double font ) 
+{ 
+    IMyTextPanel lcd = GridTerminalSystem.GetBlockWithName("lcd1") as IMyTextPanel;  
+    lcd.SetValueFloat("FontSize", (float)font); 
+} 
+  
+void print( String text, int n ) 
+{  
+    IMyTextPanel lcd = GridTerminalSystem.GetBlockWithName("lcd"+n) as IMyTextPanel;  
+    lcd.WritePublicText( text ); 
+    lcd.ShowPublicTextOnScreen(); 
+}
+
+
+
+
+//returns array of vectors in circle around entry point of station  
+//usage queue[] = DockingQueueVectors( 200, 200, approach, r_m) 
+ 
+Vector3D[] DockingQueueVectors (
+int lengthFromCenter,
+int lengthFromEachOther,
+Vector3D center )
+{ 
+IMyTerminalBlock remote = GridTerminalSystem.GetBlockWithName( "remote" ) as IMyTerminalBlock;  
+var r_m =  remote.WorldMatrix;
+double angle = 2*Math.Asin( (lengthFromEachOther/2) / lengthFromCenter ); 
+int queueCount = (int)Math.Floor( 360/angle ); 
+Vector3D[] coords = new Vector3D[ queueCount ];
+	 
+ 
+for( int i = 1; i < queueCount; i++) 
+{ 
+ if( i*angle < 360 && i*angle > 270 ) 
+ { 
+  coords[i-1] = center +
+ (r_m.Backward*Math.Cos(angle)*lengthFromCenter) +
+ (r_m.Right*Math.Sin(angle)*lengthFromCenter);  
+   
+ } 
+ if( i*angle < 270 && i*angle > 180 ) 
+ { 
+  coords[i-1] = center + 
+(r_m.Forward*Math.Cos(angle)*lengthFromCenter) + 
+(r_m.Right*Math.Sin(angle)*lengthFromCenter); 
+   
+ } 
+ if( i*angle < 180 && i*angle > 90 ) 
+ { 
+  coords[i-1] = center + 
+(r_m.Backward*Math.Cos(angle)*lengthFromCenter) + 
+(r_m.Left*Math.Sin(angle)*lengthFromCenter); 
+   
+ } 
+ if( i*angle < 90 && i*angle > 0 ) 
+ { 
+  coords[i-1] = center +
+ (r_m.Forward*Math.Cos(angle)*lengthFromCenter) + 
+ (r_m.Right*Math.Sin(angle)*lengthFromCenter); 
+ } 
+  
+} 
+  return coords;
+} 
+
+
+
+
+void log ( string s ) 
+{ 
+ debug += s + ","; 
+nter) + 
+(r_m.Left*Math.Sin(angle)*lengthFromCenter); 
+   
+ } 
+ if( i*angle < 90 && i*angle > 0 ) 
+ { 
+  coords[i-1] = center +
+ (r_m.Forward*Math.Cos(angle)*lengthFromCenter) + 
+ (r_m.Right*Math.Sin(angle)*lengthFromCenter); 
+ } 
+  
+} 
+  return coords;
+} 
+
+
+void log ( string s ) 
+{ 
+ debug += s + ","; 
+}
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTUyODk2ODcyNF19
+-->
