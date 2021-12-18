@@ -1,0 +1,375 @@
+There 	are sequences that will occur in certain order.
+At some level on a master grid, there will be only
+if/else statements?
+
+There has to be a set of rules for each economic agent
+find asteroid
+scan composition
+    but here you will want to ask if resources are necessary
+	on an agent grid, but not on individual craft performing
+	action of asteroid prospector. harvesters are only
+	interested in mining, but where is it taken?
+
+then there are sequences we want to arrange for scenarios
+warp in group means not all exact same time
+
+
+many things have to happen for travel, to ensure no in t ercept
+a calculation every time against all known grids traveling
+all stored in lists, check for response time 
+eventually many agents will be traveling at once. 
+
+
+larger stations are hubs only contested by frigate class or above
+ships. looting cannot occur if the structure is destroyed completely
+this creates incentive for boarding and FPS combat. this combat is 
+arms but also creates a place for players that just want to support
+the team (medic class, or commander). relatively small groups of
+4-5 will be up against a similiar amount of players, and there could
+be a flow of bots and the vboarding scenario can feel like a brief moba
+
+this is only possible if ships are standardized
+at first we will not worry about player builds for
+the larger class ships.
+
+start with individual, unstandardized fighters,
+with a certain limit on power and modules that grant
+a hotkey ability
+
+shields consume lots of power but prevent hull damage
+if power generator or storage is destroyed 
+
+
+
+
+distant dust clouds are primary indicators of land combat. beacon and
+antennae signals should be reserved for players that are over 4km away 
+from the conflict. this gives players outside of audible range a direction
+to pursue, but once they are within audible range - distant sound will
+be another indicator of combat. dust cloud formations will remain suspended
+for a period of time before fading and this also gives a distant, grounded
+onlooker a reference point to pursue for some action
+
+
+
+
+space implies distance
+timing
+
+
+
+planetary interaction will be a primary part of the game. ultimately
+space and fleet combat will be sought after as an expensive and risky
+way to get ahead. bases need to be seen from the horizon on the planet
+night cycles like minecraft, but creatures are criminal activity. thrusters
+light up in the night and will give away traveling craft. 
+
+think of lights suddenly on the horizon tonight, but last night they were not
+there. this is because of bot agents, that build outposts at strategic positions
+to  monitor neighboring agent activities. this game is territorial, where mineral 
+deposits become construction sources. 
+
+antennae signals are turned on not by the player, but automatically as result of 
+certain actions. imperial probe droid parallel would be rigged to turn on a players
+signal, and because it is disguised by being radio silent, cannot allow the player to
+save a gps coordinate, but instead opens it up on the HUD of the owning/scouting
+player as a guide towards an unknown base. if the player can physically access
+the probe hardware - then gps can be saved. but transmitting this HUD prompt comes
+at a cost
+
+"its metal" 
+"could be one of those creatures" 
+"well it isnt friendly whatever it is chewie lets check it out"
+
+
+
+
+
+
+GPS controls must be restricted in order to facilitate certain interactions
+this means ships will take you somewhere and you cannot return by saving 
+coordinates. 
+
+GPS coords can be saved but only when accessing certain terminals where you
+are physically touching. then jump can be enabled there. all players have a 
+list of the same GPS coords by default at first. this encourages intersections
+of interaction that can be watched by NPC neutral turrets that only attack 
+a player that is firing. ramming will somehow need to be enforced. 
+
+
+since there is a 100 m/s speed limit, autopilot will be the necessary automation
+tool for offline play
+
+speed limit removed will enable warping in effect. distant effects will be essential
+for combat sequences. players that move quickly with ship engines become visible
+at increasing distances. this is how we can unite players with different caliber 
+gaming systems. tree view distance and grass density and view distance mean players
+cannot use the grass or foliage as cover for sneak attacks. but even on low settings
+if we deploy the above proposed system where movement speed gives visibility - a slow
+walking player in range of another player with low system specs and settings would
+not even render. 
+
+we can eventually agree to some sort of tree and grass density minimum, to where
+both high and low spec players' FPS experience will be competitive with their 
+abililty to disguise their movements at moderate marksman ranges. 
+
+these high speed transistions are done by player selection rather than constant
+arbitrary throttling - if your intended distance is far, you will require a brief
+charging sequence depending on distance needed. long interplantery hops will be
+an event worth contesting and a high risk/reward for the escapee. 
+
+we want to allow players skirmish and escape potential but there has to be a balance.
+size should be the deciding factor here 
+
+
+
+		
+
+
+planet entry by default requires at least one revolution. the speed at which 
+players enter is a static value, but the distance jumped from may require more
+revolutions. this is like an interstate off ramp, which is curved and sloped 
+to assist the decelerating vehicle for its transition into slower paced
+traffic and infrastructure, which is what the planet represents. the atmosphere
+and its pressure slows the max speed because of wind resistence (a medium to 
+travel through instead of vaccuum).
+
+
+likewise, if players are "winding up" to launch themselves (building up speed
+by accelerating while looping the planet), opposing players can determine the
+trajectory and if they are able to line up in time with a sort of expensive 
+device (interdictor) and match the velocity in a shorter amount of time, thus
+launching them with the other player who gave away their position for many 
+kilometers by increasing speed. a successful interdiction, like Elite Dangerous
+puts both players into ship combat until the long distance travel duration is 
+complete. this would mean the traveling (perhaps commercial and not for combat)
+ship could be arriving at a more heavily guarded area and the attacker will 
+have to realize this risk when pursuing. if the attacked ship is destroyed, 
+wreckage autotmatically disintegrates and the successful attacker can choose 
+to break out of interdiction short of the original target if not past a certain
+threshold
+
+
+size of a grid will also affect its visibility. this means large ships on the
+horizon will be clearly visible even if moving slow or stationary. grids like 
+these can be punishing to the overall sim speed, so painting them as targets
+for both players and NPC's can be a way to moderate against complexity
+
+
+
+
+
+trading and mining must be performed in order to earn printed ships
+players that desire the combat option can be reward by a ratio 
+determined by the risk and time involved to do any operation that 
+eventually will run the natural economy
+
+
+a player would be satisfied seeing their creation(s) destroy hordes of 
+robot foes that could overwhelm but will outnumber the player
+another player with these hordes presents an issue like league faces
+players with
+
+turrets are actually hovering rail guns that can warp in within 10 seconds
+they are automatically spawned with special thruster to bring to
+ a precise point above player with call in
+ 
+ 
+ 
+ players can eventually run an economy with npcs that perform simple tasks
+ the player that owns the enterprise can tune into different radio frequencies
+ where npc text will be 	
+ 
+ 
+ 
+ 
+ even without modding game files, a game mode could be created. factories
+ would have the ability to print ships which will all stage in a certain 
+ area where they can jump together as soon as a certain count is reached
+ that the player specifies. or even without player specficiation, this
+ could automatically happen and send ships to a certain area where they
+ can fight automatically. this creates moba like combat that the player
+ can intervene in and push waves that advance to new points of interest
+ that further guide the location of player interaction zones. 
+ 
+ maybe a jungle type location can be a place where antennae signals 
+ are removed. 'nexus locations' or factory hubs that produce the minions 
+ are located on planets, and it is a planet versus planet scenario where
+ most of the fighting occurs in space. however, once planets are reached, 
+ the final battle will be planetside, and flying vehicles could incur
+ a sort of speed and energy penalty due to high gravity affecting 
+ power requirements. this air support could still be an element of combat, 
+ but wheeled transportation would be the standard for this final battle
+ for the stronghold scenario. 
+ 
+ automated mining can give the base a starcraft feel, and perhaps we could
+ open up the possibility of a player worker line raid, where NPC craft
+ can be destroyed by a player controlled craft in great numbers if they
+ are clustered. 
+ 
+ the wave attacking and minion farming aspect gives the player pleasure 
+ as they can handle hordes of npc players. but pvp fighting in groups
+ will present the same sort of challenges as in MOBA pvp titles
+ 
+ 
+ mining can be performed as in elite dangerous. player will launch a probe
+ that will self destruct after a designated few dozen seconds. if it detects
+ an asteroid by pinging a cpu intensive block every few seconds according
+ to its speed, it will have somewhere to slow and attach to. at this point
+ it sends a signal saying asteroid discovered where it can deliver a gps
+ behind where it landed (to designate an open zone where things can be 
+ further managed). this entire process can be automated once the player
+ discovers and tags the asteroid. 
+ 
+ players can increase or decrease the mining rate of certain asteroids,
+ which is a simple number that could be eventually enabled in a mobile 
+ app. 
+ 
+ this experience is going to be designed to reward both the economic
+ and micromanaging prowess of an engineering mind, as well as the
+ agile, perceptive hand-eye coordinated combat oriented player. 
+ 
+ 
+ for now, asteroids can be just all stone that has a certain percentage
+ of several ores, as in elite dangerous. this simplifies the automated
+ mining ability, which still can show players remaining material remaining
+ at a glance. space engineers is territory oriented, and once asteroids are
+ controlled, they will fuel a fraction of an economy that all players 
+ participate in. lets say asteroids have 4 -5  elements in them. rare
+ ore like gold, silver, platinum always occur in small concentrations,
+ which is worth saving and eventually all players can trade them since they
+ will be a high price. 
+ 
+ 
+ component requirements could be modified, and at first factories will have
+ infinite quantities of components automatically available in order to
+ keep a continuous flow of ships. but eventually these factories
+ will have components delivered and there could be economic disruption in
+ that manner. 
+
+
+
+new players will be required to weld a bit, and we can adjust this time
+new tools are granted in exchange for something. automated tools will be
+more sought after, but welding can still yield quick cash. there has to 
+be something at stake, that should be player accumulated resources
+
+ulmately players can show off their creations through the amount of permitted
+replications. money has to fund combat auotmate somehow, like a sport. salvage
+ops lucrative. thats alot of floating parts, so time limit on unpowered grid 
+
+
+
+_))))) current online server, vanilla
+100 ms time constraint
+autopilot seems useable with workarounds
+timer blocks can 
+
+
+
+
+view distance has to be balanced in order to give player incentive to 
+use foilage, camoflauge, and slower movement to achieve their
+objectives. the length of grass, its distance render, and player
+position relative to a hill makes a drastic difference when trying to
+infer object position and distance without hud markers. a battlegroup 
+traveling with wheels may not have their grids rendered from far away 
+as a reward for their discretion and the presence of trees and a forest
+which ultimately would hide this sort of activity in the real world. 
+but due to the constraints of the game engine - we cannot render all of
+this detail and have the player use it. therefore, the penalty of 
+ground travel would be a slight dust cloud render, which could be cheap 
+to do computationally, and still grant the wheeled travelling player 
+immunity to the exact location of the grid from a distance, but once a 
+player with an advantage in the form of aerial powered aircraft comes 
+along to respond to the dust cloud, the grid will render within however 
+many kilometers we choose. 
+
+the description above desires to create the scenario of a player aerial
+POV traveling relatively fast noticing a slight change in the scenery 
+that may not be as easily visilbe from ground level. this would prompt
+a curious player to investigate, and since we are setting rendering rules,
+we could also make the individual forest trees render within view distance
+of the flying player. this would mean there would not be an exact 
+source of the dust, but a general pattern that would infer the sound of the
+traveling wheeled vehicle. 
+
+audio hearing distance is closely tied to this system. a loud air traveling
+vehicle coudl be heard but not seen. a wheeled vehicle could be neither heard
+nor seen, until a closer proximity. rumbling engines with sound proofed
+engine bays could be an engineering tactic that may come at a fuel penalty
+
+
+	note: longer distance hauls can be treated in this same regard, with
+	both sound and visual cues. as a player approaches a new planet from 
+	another, this would imply millions of kilometers of travel, so we can
+	agree on an amount of time that would be fair to give a shimmer for
+	planetary players. lets say that this shimmer would be less obvious at
+	first if the viewer is the destination of the jumping player. players 
+	at different angles would have a more pronounced view of the travel
+	sequence. if you are on a planet independent of a large scale transmission
+	of freight - it would be obvious as the distant skies would be filled
+	with constant streaking, which may not be as obvious unless we only 
+	allow details to be visible with a telescope. the effect this could have 
+	is the curious interplanetary player arrange for travel to another "hot"
+	sector. 
+	
+footfall sound will be tweaked, and grass density would have a minimum 
+required distance, of only a hundred meters or so. this would create a 
+combat distance for ground based players. jump packs will need to be 
+altered. a hover mode introduced? ultimately we want to suppress the 
+abililty to launch a player far above the action and see other players
+utilizing the grass. if this is allowed, we could still rely on our 
+render mechanics to keep players hidden. this may arrange  a scenario
+where a surrounded player can launch themselves above the canopy of
+the trees where he may be closed in on foot within 100m. his grass 
+cover allowed him to get this far, but once the 'launch' happens his 
+position is obvious. the hunting players coudl fire on him, but would 
+not likely be accurate, but they can afford to try, because the jetting
+player would be losing character model render distance because what 
+the effect of rapid acceleration and wind rush would do to a person 
+in real life. we could even drastically limit their view sensitivity,
+because the G forces required for the escape situation they were found 
+in will limit their physical ability temporarily
+
+
+colliding craft will be handled by replacing both grids instantly with 
+a flat texture arrangement that could reflect the nature of the crash
+ultimately we want to slightly distort the player POV and hud in order
+to simulate the phyisical severity of violent explosions, lurches, 
+collisions, gunfire, thruster burn. this would mean a local render of
+a spectacular event would yield in instant death, negating the need 
+to render anyways. or, it would have a delayed render for the purpose
+of wreckage (that also reflects the nature of the crash), all in the
+middle of a large cloud of dust and debris and players within a certain
+proximity could have blurred vision that would hide the required 
+delayed render load of the destructive event
+
+
+large objects on the horizon. this scene could be arranged by introducing
+a slow moving, towering mobile structure that could be used for a fast
+mining feature. and simultaneous heavily armored and defending fortress.
+it could essentially function like an AoE2 siege engine. slow movement 
+speed, visible horizon signature, easy probe detection would be the
+keys to countering this force. its advantages include rapid player 
+repairs, respawn, mobile construction, fast mining, and a certain type
+of turret required to get past a certain type of defense. this would
+create incentive to build these large expensive titan elements that 
+allow a player to run campaigns. these machines would be required for 
+multiple players to be on board in order to operate. this would prevent
+one player from tirading around alone. 
+
+eventually we want to be able to use sheer numbers of NPCs to overwhelm
+players. smart players can kite npc hordes around, but opposing players 
+can interfere with PVE like DayZ. this would create crude but operational
+NPC interaction environments where rates and values can be tweaked in order
+to accommodate players eventually seeking challenge, noteriety, progression.
+we cannot simulate large scale AI driven community growth because of limits
+imposed by the engine and current hardware.
+
+back to the canopy, forest, tree example. as with joint operations typhoon 
+rising, grass can hide the player at a distance without rendering the
+expensive grass. so, perform this same function with a forest texture that
+could somehow appear over areas where players may want to conceal from 
+satellite  or aerial observation. but we would not them to be able to hide
+indefinately\. 
