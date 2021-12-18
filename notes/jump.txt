@@ -1,0 +1,66 @@
+
+
+void Main( string argument ) 
+{
+ var gts = GridTerminalSystem;
+ IMyThrust jumpThrust = gts.GetBlockWithName( "Jump_Thruster" ) as IMyThrust;
+
+
+}
+
+void Jump( Vector3D destination )
+{
+ var gts = GridTerminalSystem;
+ IMyThrust jumpThrust = gts.GetBlockWithName( "Jump_Thruster" ) as IMyThrust;
+ IMyTimerBlock timer = gts.GetBlockWithName( "timer" ) as IMyTimerBlock;
+ IMyRemoteControl rem = gts.GetBlockWithName( "rem" ) as IMyRemoteControl;
+ rem.CubeGrid.
+ 
+ //check distance from current, only jump if distance > 30km
+ if ( distance < 30000 )
+ {
+  // align to point
+  // determine required jump energy, charge capacitor
+  // dampen to 0 m/s
+  // determine max jump acceleration
+  // maxN = jumpThrust.MaxThrust
+  // m = rem.CalculateShipMass()
+  // f = ma, max_A = max_F/m
+  // 
+
+}
+
+Since the autopilot doesn't use fuel when it moves to a point, I'm trying to use the remote only for its orientation feature:
+
+- turn off gyros
+- set to "One Way", set intended orientation direction
+- duplicate the same vector 3 times on the waypoint list (work-around for autopilot not turning off)
+-  autopilot off can confirms alignment complete
+
+
+Now I'm needing to initiate a thrust using known values and f=ma, where max acceleration is a=MaxEffectiveThrust/TotalMass. With these values, and the distance to the vector, I can set the program to run twice during the entire journey - one for acceleration and one for deceleration. 
+
+
+This can be achieved in different ways:
+
+ - backward thrusters (doesn't have to match forward max thrust - the function can take this into account and adjust the timers for a shorter acceleration and longer deceleration, or vice versa) 
+
+- a separate function that turns the ship around 180 degrees (as seen on "The Expanse") and use the same thrusters for the deceleration. This would involve taking into account the time required to turn around. I'm not sure how this would work using autopilot - there is no precision with its rotation behavior. I've removed in-game speed limits, so for the short distances it may be better to use the smaller stabilization thrusters that all ships must have. But if the distance is above a certain threshold that takes into account, say, a 30 second-rotation-time-buffer, then it could be be more economical than putting another huge engine in the front that only gets used for long-distance travel. Even if the distance is short, accelerating at well below max for 1 second and rotating for 30 seconds 
+
+This is getting tangential - the primary focus is how to compute the times t1 and t3 for the two burns. I know the variables I need to get or set:
+- distance to destination (d)
+- max thruster force (f)
+- mass (m) 
+- max acceleration (a)
+- acceleration time (t1)
+- coasting time (t2) , for deceleration preparation - no rates here, just t2*v for distance
+- deceleration time (t3) 
+
+I'm not sure how to put it all together. Each second (t1) that the ship is accelerating (a = f/m) all adds up to a distance traveled...
+
+d = a*1 + a*2 + a*3 + ... +a*t 
+
+But "d" is limited by 
+
+This expression is impractical for directly programming how long (t) to burn thrust... is there some sort of summation notation in C# that I can use to extract "t"?
+

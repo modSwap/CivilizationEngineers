@@ -1,0 +1,50 @@
+freeMove
+craneShip
+commsTemplate
+
+machine learning for clockwork trajectory:
+	there will be a window of opportunity for more efficient ship processing due to the distance required for a ship to move from the queue to the jump zone after the preceding ship jumps
+
+	the bottleneck is the inconsistency of the Align function, which relies on in-game autopilot sending verification of successful alignment. This time sometimes varies
+
+	The machine learning can take place by keeping track of the average time required to align, and applying that to a timer that can send ships at a consistently controlled speed to the jump point before the preceding ship launches
+
+
+
+volume function
+	determine volume of a grid relative to a reference block
+	offset of reference should be taken into account relative to the center of the volume
+
+
+
+phone app
+	export small but strategically significant packets of data from a server
+	integrate with a custom android/iOS app
+	data of interest includes 
+		cargo, 
+		velocity,
+		distances,  
+		market data, 
+		grid positions, 
+		fleet diagnostics,
+		ship functionality,
+		ship missing blocks,
+		firepower/ammunition,
+		production parameters,
+
+
+
+
+f=ma
+a=f/m
+1,174,793 kg
+100kN = Forward thrust 
+
+bool FreeMove(direction_clearance, direction_clearance)
+{
+	/*
+	
+
+
+	*/
+}
